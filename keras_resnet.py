@@ -11,9 +11,9 @@ from sklearn.model_selection import train_test_split
 
 num_classes = 103
 num_epochs = 32
-batch_size = 128
+batch_size = 32
 patience = 10
-learning_rate = 0.0036
+learning_rate = 0.001
 
 model = ResNet50(weights='imagenet', include_top=False)
 x_train, y_train, _ = pickle.load(open('data.pickle', 'rb'))
@@ -72,9 +72,9 @@ with tf.Session() as sess:
         j = 0
         for x_feed, y_feed in next_batch(x_train, y_train):
             loss, _ = sess.run([loss_op, train_op], feed_dict={X: x_feed, y: y_feed})
-            if j % 50 == 0:
+            if j % 100 == 0:
                 print("Epoch %d, batch %d: loss = %f" % (i, j, loss))
-            if j % 200 == 0:
+            if j % 600 == 0:
                 accs = []
                 for x_val_feed, y_val_feed in next_batch(x_val, y_val):
                     y_pred = sess.run(pred, feed_dict={X: x_val_feed, y: y_val_feed})
