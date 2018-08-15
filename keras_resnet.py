@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 
 
 num_classes = 103
-num_epochs = 3
+num_epochs = 12
 batch_size = 128
 patience = 10
 
