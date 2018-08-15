@@ -13,6 +13,7 @@ num_classes = 103
 num_epochs = 12
 batch_size = 128
 patience = 10
+learning_rate = 0.001
 
 model = ResNet50(weights='imagenet', include_top=False)
 x_train, y_train, _ = pickle.load(open('data.pickle', 'rb'))
@@ -60,7 +61,7 @@ pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, num_classes)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
-train_op = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(loss_op)
+train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss_op)
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
