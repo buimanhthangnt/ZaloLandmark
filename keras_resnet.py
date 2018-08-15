@@ -1,5 +1,5 @@
 from keras.applications.resnet50 import ResNet50
-from keras_preprocessing import image
+from keras.preprocessing import image
 from keras.applications.resnet50 import preprocess_input, decode_predictions
 import numpy as np
 import pickle
@@ -56,7 +56,7 @@ pred = tf.layers.average_pooling2d(x_train, (7, 7), strides=(7,7))
 pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, num_classes)
 
-loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_train, logits=pred))
+loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_train, logits=pred))
 train_op = tf.train.AdamOptimizer(learning_rate=0.0005).minimize(loss_op)
 
 with tf.Session() as sess:
