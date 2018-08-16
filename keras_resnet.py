@@ -64,7 +64,7 @@ pred = tf.layers.dense(pred, num_classes)
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
 train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss_op)
 
-with tf.Session() as sess:
+with tf.InteractiveSession() as sess:
     sess.run(tf.global_variables_initializer())
     n_steps_no_improvement = 0
     best_acc = 0
