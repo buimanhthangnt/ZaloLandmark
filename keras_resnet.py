@@ -62,9 +62,9 @@ for i in range(num_epochs):
     j = 0
     for x_feed, y_feed in next_batch(x_train, y_train):
         loss, _ = sess.run([loss_op, train_op], feed_dict={X: x_feed, y: y_feed})
-        if j % 20 == 0:
+        if j % 40 == 0:
             print("Epoch %d, batch %d: loss = %f" % (i, j, loss))
-        if j % 100 == 0:
+        if j % 200 == 0:
             accs = []
             for x_val_feed, y_val_feed in next_batch(x_val, y_val):
                 y_pred = sess.run(pred, feed_dict={X: x_val_feed, y: y_val_feed})
