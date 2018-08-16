@@ -13,11 +13,11 @@ num_classes = 103
 num_epochs = 200
 batch_size = 128
 patience = 20
-learning_rate = 0.03
+learning_rate = 0.025
 decay = 0.9
 
 model = ResNet50(weights='imagenet', include_top=False)
-x_train, y_train, _ = pickle.load(open('data.pickle', 'rb'))
+x_train, y_train = pickle.load(open('new_data.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.08)
 
@@ -27,22 +27,11 @@ def next_batch(XXX, YYY, batch_size=batch_size):
     for i in range(num_batch):
         x_batch, y_batch = [], []
         for path, label in zip(XXX[i*batch_size:(i+1)*batch_size], YYY[i*batch_size:(i+1)*batch_size]):
-            try:
-                img = image.load_img(path, target_size=(224, 224))
-            except:
-                continue
-
-            img = image.img_to_array(img)
-            x_batch.append(img)
-
-            y_tmp = np.zeros((num_classes, ))
-            y_tmp[label] = 1
-            y_batch.append(y_tmp)
+            feature_vec = pickle.load(open(path, 'rb')))
+            x_batch.append(feature_vec)
+            y_batch.append(label)
 
         x_batch = np.array(x_batch)
-        x_batch = preprocess_input(x_batch, mode='tf')
-        x_batch = get_features(x_batch)
-
         y_batch = np.array(y_batch)
 
         yield x_batch, y_batch

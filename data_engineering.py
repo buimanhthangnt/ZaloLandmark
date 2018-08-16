@@ -78,8 +78,6 @@ def dump_data():
     count = 0
     new_x_train, new_y_train = [], []
     for x, y in next_batch(x_train, y_train, batch_size=128):
-        if count % 1000 == 0:
-            print(count)
         for e_x, e_y in zip(x, y):
             path = 'pickle/' + str(count) + '.pickle'
             pickle.dump(e_x, open(path, 'wb'), pickle.HIGHEST_PROTOCOL)
