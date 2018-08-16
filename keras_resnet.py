@@ -11,15 +11,15 @@ from sklearn.model_selection import train_test_split
 
 num_classes = 103
 num_epochs = 200
-batch_size = 128
-patience = 20
-learning_rate = 0.025
+batch_size = 64
+patience = 36
+learning_rate = 0.008
 decay = 0.9
 
 model = ResNet50(weights='imagenet', include_top=False)
 x_train, y_train = pickle.load(open('new_data.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.08)
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
 
 
 def next_batch(XXX, YYY, batch_size=batch_size):
