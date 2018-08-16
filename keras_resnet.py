@@ -64,38 +64,38 @@ pred = tf.layers.dense(pred, num_classes)
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
 train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss_op)
 
-with tf.InteractiveSession() as sess:
-    sess.run(tf.global_variables_initializer())
-    n_steps_no_improvement = 0
-    best_acc = 0
-    saver = tf.train.Saver()
-    for i in range(num_epochs):
-        j = 0
-        for x_feed, y_feed in next_batch(x_train, y_train):
-            loss, _ = sess.run([loss_op, train_op], feed_dict={X: x_feed, y: y_feed})
-            if j % 100 == 0:
-                print("Epoch %d, batch %d: loss = %f" % (i, j, loss))
-            if j % 600 == 0:
-                accs = []
-                for x_val_feed, y_val_feed in next_batch(x_val, y_val):
-                    y_pred = sess.run(pred, feed_dict={X: x_val_feed, y: y_val_feed})
-                    y_pred = np.argmax(y_pred, axis=1)
-                    y_val_label = np.argmax(y_val_feed, axis=1)
-                    acc = np.mean(y_pred == y_val_label)
-                    accs.append(acc)
-                final_acc = np.mean(np.array(accs))
-                print("Validation accuracy: %f" % final_acc)
-                if final_acc > best_acc:
-                    best_acc = final_acc
-                    n_steps_no_improvement = 0
-                    saver.save(sess, './model/resnet.ckpt')
-                    print("Saved model")
-                else:
-                    n_steps_no_improvement += 1
-                    print(str(n_steps_no_improvement) + " steps with no improvement")
-                    if n_steps_no_improvement > patience:
-                        print("Best acc: %f" % (best_acc))
-                        break
-            j += 1
-        if n_steps_no_improvement > patience:
-            break
+sess =  tf.InteractiveSession()
+sess.run(tf.global_variables_initializer())
+n_steps_no_improvement = 0
+best_acc = 0
+saver = tf.train.Saver()
+for i in range(num_epochs):
+    j = 0
+    for x_feed, y_feed in next_batch(x_train, y_train):
+        loss, _ = sess.run([loss_op, train_op], feed_dict={X: x_feed, y: y_feed})
+        if j % 100 == 0:
+            print("Epoch %d, batch %d: loss = %f" % (i, j, loss))
+        if j % 600 == 0:
+            accs = []
+            for x_val_feed, y_val_feed in next_batch(x_val, y_val):
+                y_pred = sess.run(pred, feed_dict={X: x_val_feed, y: y_val_feed})
+                y_pred = np.argmax(y_pred, axis=1)
+                y_val_label = np.argmax(y_val_feed, axis=1)
+                acc = np.mean(y_pred == y_val_label)
+                accs.append(acc)
+            final_acc = np.mean(np.array(accs))
+            print("Validation accuracy: %f" % final_acc)
+            if final_acc > best_acc:
+                best_acc = final_acc
+                n_steps_no_improvement = 0
+                saver.save(sess, './model/resnet.ckpt')
+                print("Saved model")
+            else:
+                n_steps_no_improvement += 1
+                print(str(n_steps_no_improvement) + " steps with no improvement")
+                if n_steps_no_improvement > patience:
+                    print("Best acc: %f" % (best_acc))
+                    break
+        j += 1
+    if n_steps_no_improvement > patience:
+        break
