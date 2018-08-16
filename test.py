@@ -9,6 +9,7 @@ from sklearn.utils import shuffle
 from keras.preprocessing import image
 from keras.applications.resnet50 import preprocess_input, decode_predictions
 import csv
+import tensorflow as tf
 
 
 model = ResNet50(weights='imagenet', include_top=False)
