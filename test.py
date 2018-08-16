@@ -1,18 +1,19 @@
+import os
+import numpy as np
+import glob
+import cv2
+import pickle
 from keras.applications.resnet50 import ResNet50
+import cv2
+from sklearn.utils import shuffle
 from keras.preprocessing import image
 from keras.applications.resnet50 import preprocess_input, decode_predictions
-import numpy as np
-import pickle
-from sklearn.utils import shuffle
-import tensorflow as tf
-import cv2
+import csv
 
-
-num_classes = 103
-num_epochs = 3
-batch_size = 128
 
 model = ResNet50(weights='imagenet', include_top=False)
+num_classes = 103
+batch_size = 128
 
 
 def get_features(images):
@@ -21,39 +22,69 @@ def get_features(images):
     return features
 
 
-def get_rand_test():
-    _, _, x_test = pickle.load(open('data.pickle', 'rb'))
-    x_test = shuffle(x_test)
-    rand_choice = []
-    for path in x_test[:10]:
-        try:
-            img = image.load_img(path, target_size=(224, 224))
-        except:
-            continue
-        img = image.img_to_array(img)
-        rand_choice.append(img)
-        print(path)
-
-    rand_choice = np.array(rand_choice)
-    rand_choice = preprocess_input(rand_choice)
-    rand_choice = get_features(rand_choice)
-    return rand_choice
+def get_test(path):
+    x = []
+    for image in os.listdir(path):
+        x.append(os.path.join(path, image))
+    return np.array(x)
 
 
-x_train = tf.placeholder(dtype=tf.float32, shape=[None, 7, 7, 2048])
-y_train = tf.placeholder(dtype=tf.float32, shape=[None, num_classes])
+def next_batch_test(XXX, batch_size=128):
+    num_batch = len(XXX) // batch_size
+    for i in range(num_batch):
+        x_batch, paths = [], []
+        for path in XXX[i*batch_size:(i+1)*batch_size]:
+            try:
+                img = image.load_img(path, target_size=(224, 224))
+            except:
+                continue
 
-pred = tf.layers.average_pooling2d(x_train, (7, 7), strides=(7,7))
+            img = image.img_to_array(img)
+            x_batch.append(img)
+
+            path = path.split('/')[1].split('.')[0]
+            paths.append(path)
+
+        x_batch = np.array(x_batch)
+        x_batch = preprocess_input(x_batch)
+        x_batch = get_features(x_batch)
+
+        paths = np.array(paths)
+
+        yield x_batch, paths
+
+
+_, _, x_test = pickle.load(open('data.pickle', 'rb'))
+
+
+X = tf.placeholder(dtype=tf.float32, shape=[None, 7, 7, 2048])
+
+pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
 pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, num_classes)
 
-loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_train, logits=pred))
-train_op = tf.train.AdamOptimizer(learning_rate=0.0005).minimize(loss_op)
+sess =  tf.InteractiveSession()
+sess.run(tf.global_variables_initializer())
+saver = tf.train.Saver()
 
-with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    saver = tf.train.Saver()
-    saver.restore(sess, './model/resnet.ckpt')
-    x_test = get_rand_test()
-    y_pred = sess.run(pred, feed_dict={x_train: x_test})
-    print(np.argmax(y_pred, axis=1))
+saver.restore(sess, './model/resnet.ckpt')
+results = []
+ids = []
+for idx, x_batch, paths in enumerate(next_batch_test(x_test)):
+    pred = sess.run(pred, feed_dict={X: x_batch})
+    pred = np.argsort(pred, axis=1)
+    pred = pred[:,::-1]
+    pred = pred[:,:3].tolist()
+    ids.extend(paths)
+    results.extend(pred)
+
+title = ["id", "predicted"]
+content = []
+content.append(title)
+for col1, col2 in zip(ids, results):
+    col2 = ' '.join(col2)
+    content.append([col1, col2])
+result_file = open('results.csv', 'w')
+with result_file:
+    writer = csv.writer(result_file)
+    writer.writerows(content)
