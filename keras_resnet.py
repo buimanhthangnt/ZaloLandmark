@@ -27,7 +27,7 @@ def next_batch(XXX, YYY, batch_size=batch_size):
     for i in range(num_batch):
         x_batch, y_batch = [], []
         for path, label in zip(XXX[i*batch_size:(i+1)*batch_size], YYY[i*batch_size:(i+1)*batch_size]):
-            feature_vec = pickle.load(open(path, 'rb')))
+            feature_vec = pickle.load(open(path, 'rb'))
             x_batch.append(feature_vec)
             y_batch.append(label)
 
