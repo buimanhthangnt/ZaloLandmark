@@ -66,7 +66,7 @@ def next_batch(XXX, YYY, batch_size=128):
             y_batch.append(y_tmp)
 
         x_batch = np.array(x_batch)
-        x_batch = preprocess_input(x_batch, mode='tf')
+        x_batch = preprocess_input(x_batch)
         x_batch = get_features(x_batch)
 
         y_batch = np.array(y_batch)
