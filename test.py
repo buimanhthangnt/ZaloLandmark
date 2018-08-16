@@ -71,7 +71,7 @@ saver = tf.train.Saver()
 saver.restore(sess, './model/resnet.ckpt')
 results = []
 ids = []
-for idx, x_batch, paths in enumerate(next_batch_test(x_test)):
+for x_batch, paths in next_batch_test(x_test):
     pred = sess.run(pred, feed_dict={X: x_batch})
     pred = np.argsort(pred, axis=1)
     pred = pred[:,::-1]
