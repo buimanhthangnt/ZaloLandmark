@@ -10,8 +10,8 @@ from sklearn.model_selection import train_test_split
 
 
 num_classes = 103
-num_epochs = 32
-batch_size = 32
+num_epochs = 200
+batch_size = 128
 patience = 20
 learning_rate = 0.03
 decay = 0.9
