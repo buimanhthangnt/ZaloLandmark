@@ -19,7 +19,7 @@ decay = 0.9
 model = ResNet50(weights='imagenet', include_top=False)
 x_train, y_train, _ = pickle.load(open('data.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.08, random_state=12)
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.08)
 
 
 def next_batch(XXX, YYY, batch_size=batch_size):
@@ -40,7 +40,7 @@ def next_batch(XXX, YYY, batch_size=batch_size):
             y_batch.append(y_tmp)
 
         x_batch = np.array(x_batch)
-        x_batch = preprocess_input(x_batch)
+        x_batch = preprocess_input(x_batch, mode='tf')
         x_batch = get_features(x_batch)
 
         y_batch = np.array(y_batch)
