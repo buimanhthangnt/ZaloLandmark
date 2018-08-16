@@ -23,6 +23,7 @@ x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.
 
 
 def next_batch(XXX, YYY, batch_size=batch_size):
+    XXX, YYY = shuffle(XXX, YYY)
     num_batch = len(YYY) // batch_size
     for i in range(num_batch):
         x_batch, y_batch = [], []
