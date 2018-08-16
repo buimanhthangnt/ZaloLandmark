@@ -30,7 +30,7 @@ def get_test(path):
     return np.array(x)
 
 
-def next_batch_test(XXX, batch_size=128):
+def next_batch_test(XXX, batch_size=batch_size):
     num_batch = len(XXX) // batch_size
     for i in range(num_batch):
         x_batch, paths = [], []
@@ -72,18 +72,18 @@ saver.restore(sess, './model/resnet.ckpt')
 results = []
 ids = []
 for x_batch, paths in next_batch_test(x_test):
-    pred = sess.run(pred, feed_dict={X: x_batch})
-    pred = np.argsort(pred, axis=1)
-    pred = pred[:,::-1]
-    pred = pred[:,:3].tolist()
+    prediction = sess.run(pred, feed_dict={X: x_batch})
+    prediction = np.argsort(prediction, axis=1)
+    prediction = prediction[:,::-1]
+    prediction = prediction[:,:3].tolist()
     ids.extend(paths)
-    results.extend(pred)
+    results.extend(prediction)
 
 title = ["id", "predicted"]
 content = []
 content.append(title)
 for col1, col2 in zip(ids, results):
-    col2 = ' '.join(col2)
+    col2 = ' '.join(str(ele) for ele in col2)
     content.append([col1, col2])
 result_file = open('results.csv', 'w')
 with result_file:
