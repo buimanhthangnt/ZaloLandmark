@@ -12,8 +12,8 @@ from sklearn.model_selection import train_test_split
 num_classes = 103
 num_epochs = 32
 batch_size = 32
-patience = 10
-learning_rate = 0.001
+patience = 20
+learning_rate = 0.008
 
 model = ResNet50(weights='imagenet', include_top=False)
 x_train, y_train, _ = pickle.load(open('data.pickle', 'rb'))
