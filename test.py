@@ -14,7 +14,7 @@ import tensorflow as tf
 
 model = ResNet50(weights='imagenet', include_top=False)
 num_classes = 103
-batch_size = 128
+batch_size = 1
 
 
 def get_features(images):
@@ -75,7 +75,7 @@ for x_batch, paths in next_batch_test(x_test):
     prediction = sess.run(pred, feed_dict={X: x_batch})
     prediction = np.argsort(prediction, axis=1)
     prediction = prediction[:,::-1]
-    prediction = prediction[:,:3].tolist()
+    prediction = prediction[:,:3].tolist()[0]
     ids.extend(paths)
     results.extend(prediction)
 
