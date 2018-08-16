@@ -11,9 +11,9 @@ from sklearn.model_selection import train_test_split
 
 num_classes = 103
 num_epochs = 200
-batch_size = 64
+batch_size = 128
 patience = 36
-learning_rate = 0.008
+learning_rate = 0.002
 decay = 0.9
 
 model = ResNet50(weights='imagenet', include_top=False)
