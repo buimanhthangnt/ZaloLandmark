@@ -78,7 +78,7 @@ sess =  tf.Session()
 sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 
-saver.restore(sess, config.resnet_model)
+saver.restore(sess, './model2/resnet.ckpt')
 results = []
 ids = []
 for x_batch, paths in next_batch_test(x_test):
