@@ -2,18 +2,26 @@ from __future__ import division
 import numpy as np
 import pickle
 from keras.preprocessing import image
+
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 from keras.applications.inception_resnet_v2 import preprocess_input as inc_preprocess
+
 from keras.applications.resnet50 import ResNet50
 from keras.applications.resnet50 import preprocess_input as res_preprocess
+
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_v3 import preprocess_input as v3_preprocess
+
+from keras.applications.xception import Xception
+from keras.applications.xception import preprocess_input as xce_preprocess
+
 import config
 
 
 model_inc = InceptionResNetV2(weights='imagenet', include_top=False)
 model_res = ResNet50(weights='imagenet', include_top=False)
 model_v3 = InceptionV3(weights='imagenet', include_top=False)
+model_xce = Xception(weights='imagenet', include_top=False)
 
 
 def get_features_inc(images):
@@ -34,6 +42,12 @@ def get_features_v3(images):
     return features
 
 
+def get_features_xce(images):
+    global model_xce
+    features = model_xce.predict(images)
+    return features
+
+
 def dump(data, name):
     pickle.dump(data, open(name, 'wb'), pickle.HIGHEST_PROTOCOL)
 
@@ -48,6 +62,8 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
         image_size = config.image_size_inc
     elif mode == 'v3':
         image_size = config.image_size_v3
+    elif mode == 'xce':
+        image_size = config.image_size_xce
 
     num_batch = int(np.ceil(len(_Y) / config.batch_size))
     for i in range(num_batch):
@@ -76,6 +92,9 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
         elif mode == 'v3':
             x_batch = v3_preprocess(x_batch)
             x_batch = get_features_v3(x_batch)
+        elif mode == 'xce':
+            x_batch = xce_preprocess(x_batch)
+            x_batch = get_features_xce(x_batch)
 
         y_batch = np.array(y_batch)
 
@@ -97,12 +116,14 @@ def dump_data(mode):
     dump((new_x_train, new_y_train), mode + '.pickle')
     
 
-print("Dump res")
-dump_data(mode='res')
-print("Dump inc")
-dump_data(mode='inc')
-print("Dump v3")
-dump_data(mode='v3')
+# print("Dump res")
+# dump_data(mode='res')
+# print("Dump inc")
+# dump_data(mode='inc')
+# print("Dump v3")
+# dump_data(mode='v3')
+print("Dump xce")
+dump_data(mode='xce')
 
 
 def dump_test(_X, batch_size=config.batch_size, mode='res'):
@@ -112,6 +133,8 @@ def dump_test(_X, batch_size=config.batch_size, mode='res'):
         image_size = config.image_size_inc
     elif mode == 'v3':
         image_size = config.image_size_v3
+    elif mode == 'xce':
+        image_size = config.image_size_xce
 
     num_batch = int(np.ceil(len(_X) / config.batch_size))
     for i in range(num_batch):
@@ -139,14 +162,19 @@ def dump_test(_X, batch_size=config.batch_size, mode='res'):
         elif mode == 'v3':
             x_batch = v3_preprocess(x_batch)
             x_batch = get_features_v3(x_batch)
+        elif mode == 'xce':
+            x_batch = xce_preprocess(x_batch)
+            x_batch = get_features_xce(x_batch)
 
         paths = np.array(paths)
         pickle.dump((x_batch, paths), open('x_test_' + mode + '/' + str(i) + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
 
 
-print("Dump test res")
-dump_test(x_test, mode='res')
-print("Dump test inc")
-dump_test(x_test, mode='inc')
-print("Dump test v3")
-dump_test(x_test, mode='v3')
+# print("Dump test res")
+# dump_test(x_test, mode='res')
+# print("Dump test inc")
+# dump_test(x_test, mode='inc')
+# print("Dump test v3")
+# dump_test(x_test, mode='v3')
+print("Dump test xce")
+dump_test(x_test, mode='xce')

@@ -6,3 +6,4 @@ learning_rate = 0.0008
 image_size_res = 224
 image_size_inc = 299
 image_size_v3 = 299
+image_size_xce = 299
