@@ -4,18 +4,17 @@ import numpy as np
 import glob
 import cv2
 import pickle
-from keras.applications.resnet50 import ResNet50
 import cv2
 from sklearn.utils import shuffle
 from keras.preprocessing import image
-from keras.applications.resnet50 import preprocess_input, decode_predictions
+from keras.applications.inception_resnet_v2 import InceptionResNetV2
+from keras.applications.inception_resnet_v2 import preprocess_input
 import csv
 import tensorflow as tf
+import config
 
 
-model = ResNet50(weights='imagenet', include_top=False)
-num_classes = 103
-batch_size = 128
+model = InceptionResNetV2(weights='imagenet', include_top=False)
 
 
 def get_features(images):
@@ -31,13 +30,13 @@ def get_test(path):
     return np.array(x)
 
 
-def next_batch_test(XXX, batch_size=batch_size):
-    num_batch = int(np.ceil(len(XXX) / batch_size))
+def next_batch_test(XXX, batch_size=config.batch_size):
+    num_batch = int(np.ceil(len(XXX) / config.batch_size))
     for i in range(num_batch):
         x_batch, paths = [], []
-        for path in XXX[i*batch_size:(i+1)*batch_size]:
+        for path in XXX[i*config.batch_size:(i+1)*config.batch_size]:
             try:
-                img = image.load_img(path, target_size=(224, 224))
+                img = image.load_img(path, target_size=(config.image_size, config.image_size))
             except:
                 print(path)
                 continue
@@ -60,17 +59,18 @@ def next_batch_test(XXX, batch_size=batch_size):
 _, _, x_test = pickle.load(open('data.pickle', 'rb'))
 
 
-X = tf.placeholder(dtype=tf.float32, shape=[None, 7, 7, 2048])
+X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)
 
-pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
-pred = tf.layers.flatten(pred)
-pred = tf.layers.dense(pred, num_classes)
+pred = tf.keras.layers.GlobalAveragePooling2D(X)
+# pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
+# pred = tf.layers.flatten(pred)
+pred = tf.layers.dense(pred, config.num_classes)
 
 sess =  tf.Session()
 sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 
-saver.restore(sess, './model/resnet.ckpt')
+saver.restore(sess, config.inception_resnet_model)
 results = []
 ids = []
 for x_batch, paths in next_batch_test(x_test):
@@ -87,7 +87,7 @@ content.append(title)
 for col1, col2 in zip(ids, results):
     col2 = ' '.join(str(ele) for ele in col2)
     content.append([col1, col2])
-result_file = open('results.csv', 'w')
+result_file = open('results_inc.csv', 'w')
 with result_file:
     writer = csv.writer(result_file)
     writer.writerows(content)

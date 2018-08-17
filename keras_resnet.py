@@ -1,33 +1,23 @@
-from keras.applications.resnet50 import ResNet50
-from keras.preprocessing import image
-from keras.applications.resnet50 import preprocess_input, decode_predictions
 import numpy as np
 import pickle
 from sklearn.utils import shuffle
 import tensorflow as tf
 import cv2
 from sklearn.model_selection import train_test_split
+import config
 
 
-num_classes = 103
-num_epochs = 200
-batch_size = 128
-patience = 36
-learning_rate = 0.002
-decay = 0.9
-
-model = ResNet50(weights='imagenet', include_top=False)
-x_train, y_train = pickle.load(open('new_data.pickle', 'rb'))
+x_train, y_train = pickle.load(open(config.new_data_inception, 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
 
 
-def next_batch(XXX, YYY, batch_size=batch_size):
+def next_batch(XXX, YYY, batch_size=config.batch_size):
     XXX, YYY = shuffle(XXX, YYY)
-    num_batch = len(YYY) // batch_size
+    num_batch = len(YYY) // config.batch_size
     for i in range(num_batch):
         x_batch, y_batch = [], []
-        for path, label in zip(XXX[i*batch_size:(i+1)*batch_size], YYY[i*batch_size:(i+1)*batch_size]):
+        for path, label in zip(XXX[i*config.batch_size:(i+1)*config.batch_size], YYY[i*config.batch_size:(i+1)*config.batch_size]):
             feature_vec = pickle.load(open(path, 'rb'))
             x_batch.append(feature_vec)
             y_batch.append(label)
@@ -38,28 +28,23 @@ def next_batch(XXX, YYY, batch_size=batch_size):
         yield x_batch, y_batch
 
 
-def get_features(images):
-    global model
-    features = model.predict(images)
-    return features
+X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)
+y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
-
-X = tf.placeholder(dtype=tf.float32, shape=[None, 7, 7, 2048])
-y = tf.placeholder(dtype=tf.float32, shape=[None, num_classes])
-
-pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
-pred = tf.layers.flatten(pred)
-pred = tf.layers.dense(pred, num_classes)
+pred = tf.keras.layers.GlobalAveragePooling2D(X)
+# pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
+# pred = tf.layers.flatten(pred)
+pred = tf.layers.dense(pred, config.num_classes)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
-train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss_op)
+train_op = tf.train.AdamOptimizer(config.learning_rate=config.learning_rate).minimize(loss_op)
 
 sess =  tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
 n_steps_no_improvement = 0
 best_acc = 0
 saver = tf.train.Saver()
-for i in range(num_epochs):
+for i in range(config.num_epochs):
     j = 0
     for x_feed, y_feed in next_batch(x_train, y_train):
         loss, _ = sess.run([loss_op, train_op], feed_dict={X: x_feed, y: y_feed})
@@ -67,31 +52,25 @@ for i in range(num_epochs):
             print("Epoch %d, batch %d: loss = %f" % (i, j, loss))
         if j % 200 == 0:
             accs = []
-            tmp1, tmp2 = None, None
             for x_val_feed, y_val_feed in next_batch(x_val, y_val):
                 y_pred = sess.run(pred, feed_dict={X: x_val_feed, y: y_val_feed})
                 y_pred = np.argmax(y_pred, axis=1)
-                tmp1 = y_pred
                 y_val_label = np.argmax(y_val_feed, axis=1)
-                tmp2 = y_val_label
                 acc = np.mean(y_pred == y_val_label)
                 accs.append(acc)
             final_acc = np.mean(np.array(accs))
-            if final_acc > 0.7:
-                print(tmp1)
-                print(tmp2)
             print("Validation accuracy: %f" % final_acc)
             if final_acc > best_acc:
                 best_acc = final_acc
                 n_steps_no_improvement = 0
-                saver.save(sess, './model/resnet.ckpt')
+                saver.save(sess, config.inception_resnet_model)
                 print("Saved model")
             else:
                 n_steps_no_improvement += 1
                 print(str(n_steps_no_improvement) + " steps with no improvement")
-                if n_steps_no_improvement > patience:
+                if n_steps_no_improvement > config.patience:
                     print("Best acc: %f" % (best_acc))
                     break
         j += 1
-    if n_steps_no_improvement > patience:
+    if n_steps_no_improvement > config.patience:
         break
