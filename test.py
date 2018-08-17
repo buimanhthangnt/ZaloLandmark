@@ -16,6 +16,8 @@ elif mode == 'inc':
     feature_shape = [None, 8, 8, 1536]
 elif mode == 'v3':
     feature_shape = [None, 8, 8, 2048]
+elif mode == 'xce':
+    feature_shape = [None, 10, 10, 2048]
 
 
 def next_batch_test():
@@ -36,6 +38,8 @@ if mode == 'res':
 elif mode == 'inc':
     pred = tf.reduce_mean(X, axis=[1,2])
 elif mode == 'v3':
+    pred = tf.reduce_mean(X, axis=[1,2])
+elif mode == 'xce':
     pred = tf.reduce_mean(X, axis=[1,2])
 
 pred = tf.layers.dense(pred, config.num_classes)
