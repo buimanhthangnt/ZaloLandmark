@@ -31,13 +31,14 @@ def get_test(path):
 
 
 def next_batch_test(XXX, batch_size=batch_size):
-    num_batch = len(XXX) // batch_size
+    num_batch = np.ceil(len(XXX) // batch_size)
     for i in range(num_batch):
         x_batch, paths = [], []
         for path in XXX[i*batch_size:(i+1)*batch_size]:
             try:
                 img = image.load_img(path, target_size=(224, 224))
             except:
+                print(path)
                 continue
 
             img = image.img_to_array(img)
