@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy as np
 import pickle
 from keras.preprocessing import image
@@ -48,7 +49,7 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
     elif mode == 'v3':
         image_size = config.image_size_v3
 
-    num_batch = int(np.ceil(len(_Y) // config.batch_size))
+    num_batch = int(np.ceil(len(_Y) / config.batch_size))
     for i in range(num_batch):
         print("Batch: %d" % (i))
         x_batch, y_batch = [], []

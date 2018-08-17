@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy as np
 import pickle
 from sklearn.utils import shuffle
@@ -22,7 +23,7 @@ x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.
 
 def next_batch(_X, _Y, batch_size=config.batch_size):
     _X, _Y = shuffle(_X, _Y)
-    num_batch = len(_Y) // config.batch_size
+    num_batch = int(np.ceil(len(_Y) / config.batch_size))
     for i in range(num_batch):
         x_batch, y_batch = [], []
         for path, label in zip(_X[i*config.batch_size:(i+1)*config.batch_size], _Y[i*config.batch_size:(i+1)*config.batch_size]):
