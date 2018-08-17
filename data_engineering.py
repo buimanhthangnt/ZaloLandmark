@@ -55,6 +55,7 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
 
     num_batch = int(np.ceil(len(_Y) // config.batch_size))
     for i in range(num_batch):
+        print("Batch: %d" % (i))
         x_batch, y_batch = [], []
         for path, label in zip(_X[i*config.batch_size:(i+1)*config.batch_size], _Y[i*config.batch_size:(i+1)*config.batch_size]):
             try:
@@ -100,8 +101,11 @@ def dump_data(mode):
     dump((new_x_train, new_y_train), mode + '.pickle')
     
 
+print("Dump res")
 dump_data(mode='res')
+print("Dump inc")
 dump_data(mode='inc')
+print("Dump v3")
 dump_data(mode='v3')
 
 
@@ -144,6 +148,9 @@ def dump_test(_X, batch_size=config.batch_size, mode='res'):
         pickle.dump((x_batch, paths), open('x_test_' + mode + '/' + str(i) + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
 
 
+print("Dump test res")
 dump_test(x_test, mode='res')
+print("Dump test inc")
 dump_test(x_test, mode='inc')
+print("Dump test v3")
 dump_test(x_test, mode='v3')
