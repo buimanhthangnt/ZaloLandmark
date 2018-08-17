@@ -6,18 +6,27 @@ import cv2
 from sklearn.model_selection import train_test_split
 import config
 
+mode = 'res'
+feature_shape = None
 
-x_train, y_train = pickle.load(open(config.new_data_resnet, 'rb'))
+if mode == 'res':
+    feature_shape = [None, 7, 7, 2048]
+elif mode == 'inc':
+    feature_shape = [None, 8, 8, 1536]
+elif mode == 'v3':
+    feature_shape = [None, 8, 8, 2048]
+
+x_train, y_train = pickle.load(open(mode + '.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1, shuffle=True)
 
 
-def next_batch(XXX, YYY, batch_size=config.batch_size):
-    XXX, YYY = shuffle(XXX, YYY)
-    num_batch = len(YYY) // config.batch_size
+def next_batch(_X, _Y, batch_size=config.batch_size):
+    _X, _Y = shuffle(_X, _Y)
+    num_batch = len(_Y) // config.batch_size
     for i in range(num_batch):
         x_batch, y_batch = [], []
-        for path, label in zip(XXX[i*config.batch_size:(i+1)*config.batch_size], YYY[i*config.batch_size:(i+1)*config.batch_size]):
+        for path, label in zip(_X[i*config.batch_size:(i+1)*config.batch_size], _Y[i*config.batch_size:(i+1)*config.batch_size]):
             feature_vec = pickle.load(open(path, 'rb'))
             x_batch.append(feature_vec)
             y_batch.append(label)
@@ -28,12 +37,18 @@ def next_batch(XXX, YYY, batch_size=config.batch_size):
         yield x_batch, y_batch
 
 
-X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)
+X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
-# pred = tf.reduce_mean(X, axis=[1,2])
-pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
-pred = tf.layers.flatten(pred)
+pred = None
+if mode == 'res':
+    pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
+    pred = tf.layers.flatten(pred)
+elif mode == 'inc':
+    pred = tf.reduce_mean(X, axis=[1,2])
+elif mode == 'v3':
+    pred = tf.reduce_mean(X, axis=[1,2])
+
 pred = tf.layers.dense(pred, config.num_classes)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
@@ -57,7 +72,6 @@ for i in range(config.num_epochs):
                 y_pred = np.argsort(y_pred, axis=1)
                 y_pred = y_pred[:,::-1]
                 y_pred = y_pred[:,:3]
-                # y_pred = np.argmax(y_pred, axis=1)
                 y_val_label = np.argmax(y_val_feed, axis=1)
                 acc = np.mean(np.array([y_val_label[k] in y_pred[k] for k in range(y_pred.shape[0])]))
                 accs.append(acc)
@@ -66,13 +80,13 @@ for i in range(config.num_epochs):
             if final_acc > best_acc:
                 best_acc = final_acc
                 n_steps_no_improvement = 0
-                saver.save(sess, config.resnet_model)
+                saver.save(sess, './model_' + mode + '/' + mode + '.ckpt')
                 print("Saved model")
             else:
                 n_steps_no_improvement += 1
                 print(str(n_steps_no_improvement) + " steps with no improvement")
                 if n_steps_no_improvement > config.patience:
-                    print("Best acc: %f" % (best_acc))
+                    print("Top 3 acc: %f" % (best_acc))
                     break
         j += 1
     if n_steps_no_improvement > config.patience:
