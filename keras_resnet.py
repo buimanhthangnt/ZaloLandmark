@@ -32,7 +32,7 @@ X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)
 y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
 # pred = tf.reduce_mean(X, axis=[1,2])
-pred = tf.layers.average_pooling2d(X, (8, 8), strides=(8,8))
+pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
 pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, config.num_classes)
 
@@ -63,7 +63,7 @@ for i in range(config.num_epochs):
             if final_acc > best_acc:
                 best_acc = final_acc
                 n_steps_no_improvement = 0
-                saver.save(sess, config.inception_resnet_model)
+                saver.save(sess, config.resnet_model)
                 print("Saved model")
             else:
                 n_steps_no_improvement += 1
