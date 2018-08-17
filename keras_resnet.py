@@ -31,7 +31,7 @@ def next_batch(XXX, YYY, batch_size=config.batch_size):
 X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)
 y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
-pred = tf.keras.layers.GlobalAveragePooling2D(X)
+pred = tf.contrib.keras.layers.GlobalAveragePooling2D(X)
 # pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
 # pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, config.num_classes)
