@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 import config
 
 
-x_train, y_train = pickle.load(open(config.new_data_inception, 'rb'))
+x_train, y_train = pickle.load(open(config.new_data_resnet, 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1)
 
