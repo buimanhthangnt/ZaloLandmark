@@ -4,7 +4,10 @@ __pycache__
 *.pyc
 Public
 TrainVal
-model
+model_res
+model_v3
+model_inc
+model_xce
 x_train_res
 x_train_inc
 x_train_v3
