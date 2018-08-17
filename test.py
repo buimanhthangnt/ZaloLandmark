@@ -7,16 +7,16 @@ import pickle
 import cv2
 from sklearn.utils import shuffle
 from keras.preprocessing import image
-from keras.applications.inception_resnet_v2 import InceptionResNetV2
-from keras.applications.inception_resnet_v2 import preprocess_input
-from keras.applications.resnet50 import ResNet50
-from keras.applications.resnet50 import preprocess_input
+# from keras.applications.inception_resnet_v2 import InceptionResNetV2
+# from keras.applications.inception_resnet_v2 import preprocess_input
+# from keras.applications.resnet50 import ResNet50
+# from keras.applications.resnet50 import preprocess_input
 import csv
 import tensorflow as tf
 import config
 
 
-model = ResNet50(weights='imagenet', include_top=False)
+# model = ResNet50(weights='imagenet', include_top=False)
 
 
 def get_features(images):
