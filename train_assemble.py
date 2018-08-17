@@ -16,6 +16,8 @@ feature_shape2 = utils.get_input_shape(mode2)
 
 x_train1, y_train1 = pickle.load(open(mode1 + '.pickle', 'rb'))
 x_train2, y_train2 = pickle.load(open(mode2 + '.pickle', 'rb'))
+x_train1 = np.expand_dims(x_train1, axis=1)
+x_train2 = np.expand_dims(x_train2, axis=1)
 x_train = np.concatenate((x_train1, x_train2), axis=-1)
 y_train = y_train1
 
