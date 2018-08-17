@@ -2,7 +2,6 @@ import numpy as np
 import pickle
 from sklearn.utils import shuffle
 import tensorflow as tf
-import cv2
 from sklearn.model_selection import train_test_split
 import config
 

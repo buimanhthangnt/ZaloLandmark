@@ -1,10 +1,5 @@
-import os
 import numpy as np
-import glob
-import cv2
 import pickle
-import cv2
-from sklearn.utils import shuffle
 from keras.preprocessing import image
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 from keras.applications.inception_resnet_v2 import preprocess_input as inc_preprocess
