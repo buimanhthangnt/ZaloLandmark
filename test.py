@@ -9,12 +9,14 @@ from sklearn.utils import shuffle
 from keras.preprocessing import image
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 from keras.applications.inception_resnet_v2 import preprocess_input
+from keras.applications.resnet50 import ResNet50
+from keras.applications.resnet50 import preprocess_input
 import csv
 import tensorflow as tf
 import config
 
 
-model = InceptionResNetV2(weights='imagenet', include_top=False)
+model = ResNet50(weights='imagenet', include_top=False)
 
 
 def get_features(images):
@@ -61,16 +63,16 @@ _, _, x_test = pickle.load(open('data.pickle', 'rb'))
 
 X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)
 
-pred = tf.reduce_mean(X, axis=[1,2])
-# pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
-# pred = tf.layers.flatten(pred)
+# pred = tf.reduce_mean(X, axis=[1,2])
+pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
+pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, config.num_classes)
 
 sess =  tf.Session()
 sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 
-saver.restore(sess, config.inception_resnet_model)
+saver.restore(sess, config.resnet_model)
 results = []
 ids = []
 for x_batch, paths in next_batch_test(x_test):
@@ -87,7 +89,7 @@ content.append(title)
 for col1, col2 in zip(ids, results):
     col2 = ' '.join(str(ele) for ele in col2)
     content.append([col1, col2])
-result_file = open('results_inc.csv', 'w')
+result_file = open('results_res.csv', 'w')
 with result_file:
     writer = csv.writer(result_file)
     writer.writerows(content)
