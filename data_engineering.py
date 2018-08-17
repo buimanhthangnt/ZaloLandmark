@@ -76,7 +76,7 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
         elif mode == 'inc':
             x_batch = inc_preprocess(x_batch)
             x_batch = get_features_inc(x_batch)
-        else mode == 'v3':
+        elif mode == 'v3':
             x_batch = v3_preprocess(x_batch)
             x_batch = get_features_v3(x_batch)
 
@@ -136,7 +136,7 @@ def dump_test(_X, batch_size=config.batch_size, mode='res'):
         elif mode == 'inc':
             x_batch = inc_preprocess(x_batch)
             x_batch = get_features_inc(x_batch)
-        else mode == 'v3':
+        elif mode == 'v3':
             x_batch = v3_preprocess(x_batch)
             x_batch = get_features_v3(x_batch)
 
