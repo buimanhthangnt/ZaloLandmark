@@ -33,35 +33,38 @@ def get_test(path):
 
 
 def next_batch_test(XXX, batch_size=config.batch_size):
-    num_batch = int(np.ceil(len(XXX) / config.batch_size))
-    for i in range(num_batch):
-        x_batch, paths = [], []
-        for path in XXX[i*config.batch_size:(i+1)*config.batch_size]:
-            try:
-                img = image.load_img(path, target_size=(config.image_size, config.image_size))
-            except:
-                print(path)
-                continue
+    path = 'pickle_test'
+    for fil in os.listdir(path):
+        x_batch, paths = pickle.load(open(os.path.join(path, fil), 'rb'))
+        yield x_batch, paths
 
-            img = image.img_to_array(img)
-            x_batch.append(img)
 
-            path = path.split('/')[1].split('.')[0]
-            paths.append(path)
+    # num_batch = int(np.ceil(len(x) / config.batch_size))
+    # for i in range(num_batch):
+    #     x_batch, paths = [], []
+    #     for path in x[i*config.batch_size:(i+1)*config.batch_size]:
+    #         try:
+    #             img = image.load_img(path, target_size=(config.image_size, config.image_size))
+    #         except:
+    #             print(path)
+    #             continue
 
-        x_batch = np.array(x_batch)
-        x_batch = preprocess_input(x_batch)
-        x_batch = get_features(x_batch)
+    #         img = image.img_to_array(img)
+    #         x_batch.append(img)
 
-        paths = np.array(paths)
-        pickle.dump((x_batch, paths), open('pickle_test/' + str(i) + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
+    #         path = path.split('/')[1].split('.')[0]
+    #         paths.append(path)
 
-        # yield x_batch, paths
+    #     x_batch = np.array(x_batch)
+    #     x_batch = preprocess_input(x_batch)
+    #     x_batch = get_features(x_batch)
+
+    #     paths = np.array(paths)
+
+    #     yield x_batch, paths
 
 
 _, _, x_test = pickle.load(open('data.pickle', 'rb'))
-next_batch_test()
-exit(0)
 
 
 X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)
@@ -72,7 +75,7 @@ pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, config.num_classes)
 
 sess =  tf.Session()
-# sess.run(tf.global_variables_initializer())
+sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 
 saver.restore(sess, config.resnet_model)
