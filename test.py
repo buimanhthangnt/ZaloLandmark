@@ -7,16 +7,16 @@ import pickle
 import cv2
 from sklearn.utils import shuffle
 from keras.preprocessing import image
-# from keras.applications.inception_resnet_v2 import InceptionResNetV2
-# from keras.applications.inception_resnet_v2 import preprocess_input
-# from keras.applications.resnet50 import ResNet50
-# from keras.applications.resnet50 import preprocess_input
+from keras.applications.inception_resnet_v2 import InceptionResNetV2
+from keras.applications.inception_resnet_v2 import preprocess_input
+from keras.applications.resnet50 import ResNet50
+from keras.applications.resnet50 import preprocess_input
 import csv
 import tensorflow as tf
 import config
 
 
-# model = ResNet50(weights='imagenet', include_top=False)
+model = ResNet50(weights='imagenet', include_top=False)
 
 
 def get_features(images):
@@ -60,11 +60,13 @@ def next_batch_test(XXX, batch_size=config.batch_size):
     #     x_batch = get_features(x_batch)
 
     #     paths = np.array(paths)
-
-    #     yield x_batch, paths
+    #     pickle.dump((x_batch, paths), open('pickle_test/' + str(i) + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
+    #     # yield x_batch, paths
 
 
 _, _, x_test = pickle.load(open('data.pickle', 'rb'))
+# next_batch_test(x_test)
+# exit(0)
 
 
 X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)

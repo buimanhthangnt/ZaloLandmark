@@ -7,16 +7,25 @@ import cv2
 from sklearn.utils import shuffle
 from keras.preprocessing import image
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
-from keras.applications.inception_resnet_v2 import preprocess_input
+from keras.applications.inception_resnet_v2 import preprocess_input as inc_preprocess
+from keras.applications.resnet50 import ResNet50
+from keras.applications.resnet50 import preprocess_input as res_preprocess
 import config
 
 
-model = InceptionResNetV2(weights='imagenet', include_top=False)
+model_inc = InceptionResNetV2(weights='imagenet', include_top=False)
+model_res = ResNet50(weights='imagenet', include_top=False)
 
 
-def get_features(images):
-    global model
-    features = model.predict(images)
+def get_features_inc(images):
+    global model_inc
+    features = model_inc.predict(images)
+    return features
+
+
+def get_features_res(images):
+    global model_res
+    features = model_res.predict(images)
     return features
 
 
@@ -45,7 +54,7 @@ def dump(data, name):
 # x_train, y_train = get('TrainVal')
 # x_test = get_test('Public')
 x_train, y_train, _ = pickle.load(open('data.pickle', 'rb'))
-x_train, y_train = shuffle(x_train, y_train)
+# x_train, y_train = shuffle(x_train, y_train)
 
 
 def next_batch(XXX, YYY, batch_size=128):

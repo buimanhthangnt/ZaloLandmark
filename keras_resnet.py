@@ -54,9 +54,12 @@ for i in range(config.num_epochs):
             accs = []
             for x_val_feed, y_val_feed in next_batch(x_val, y_val):
                 y_pred = sess.run(pred, feed_dict={X: x_val_feed, y: y_val_feed})
-                y_pred = np.argmax(y_pred, axis=1)
+                y_pred = np.argsort(y_pred, axis=1)
+                y_pred = y_pred[:,::-1]
+                y_pred = y_pred[:,:3]
+                # y_pred = np.argmax(y_pred, axis=1)
                 y_val_label = np.argmax(y_val_feed, axis=1)
-                acc = np.mean(y_pred == y_val_label)
+                acc = np.mean(np.array([y_val_label[k] in y_pred[k] for k in range(y_pred.shape[0])]))
                 accs.append(acc)
             final_acc = np.mean(np.array(accs))
             print("Validation accuracy: %f" % final_acc)
