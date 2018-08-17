@@ -1,3 +1,4 @@
+from __future__ import division
 import os
 import numpy as np
 import glob
@@ -31,7 +32,7 @@ def get_test(path):
 
 
 def next_batch_test(XXX, batch_size=batch_size):
-    num_batch = np.ceil(len(XXX) // batch_size)
+    num_batch = int(np.ceil(len(XXX) / batch_size))
     for i in range(num_batch):
         x_batch, paths = [], []
         for path in XXX[i*batch_size:(i+1)*batch_size]:
