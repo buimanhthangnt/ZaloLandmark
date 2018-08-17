@@ -5,19 +5,11 @@ import pickle
 import csv
 import tensorflow as tf
 import config
+import utils
 
 
 mode = 'res'
-feature_shape = None
-
-if mode == 'res':
-    feature_shape = [None, 7, 7, 2048]
-elif mode == 'inc':
-    feature_shape = [None, 8, 8, 1536]
-elif mode == 'v3':
-    feature_shape = [None, 8, 8, 2048]
-elif mode == 'xce':
-    feature_shape = [None, 10, 10, 2048]
+feature_shape = utils.get_input_shape(mode)
 
 
 def next_batch_test():
@@ -31,17 +23,7 @@ _, _, x_test = pickle.load(open('data.pickle', 'rb'))
 
 X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 
-pred = None
-if mode == 'res':
-    pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
-    pred = tf.layers.flatten(pred)
-elif mode == 'inc':
-    pred = tf.reduce_mean(X, axis=[1,2])
-elif mode == 'v3':
-    pred = tf.reduce_mean(X, axis=[1,2])
-elif mode == 'xce':
-    pred = tf.reduce_mean(X, axis=[1,2])
-
+pred = utils.top_layers(X)
 pred = tf.layers.dense(pred, config.num_classes)
 
 sess =  tf.Session()

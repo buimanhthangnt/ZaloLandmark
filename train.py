@@ -5,18 +5,11 @@ from sklearn.utils import shuffle
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 import config
+import utils
+
 
 mode = 'xce'
-feature_shape = None
-
-if mode == 'res':
-    feature_shape = [None, 7, 7, 2048]
-elif mode == 'inc':
-    feature_shape = [None, 8, 8, 1536]
-elif mode == 'v3':
-    feature_shape = [None, 8, 8, 2048]
-elif mode == 'xce':
-    feature_shape = [None, 10, 10, 2048]
+feature_shape = utils.get_input_shape(mode)
 
 x_train, y_train = pickle.load(open(mode + '.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
@@ -42,17 +35,7 @@ def next_batch(_X, _Y, batch_size=config.batch_size):
 X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
-pred = None
-if mode == 'res':
-    pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
-    pred = tf.layers.flatten(pred)
-elif mode == 'inc':
-    pred = tf.reduce_mean(X, axis=[1,2])
-elif mode == 'v3':
-    pred = tf.reduce_mean(X, axis=[1,2])
-elif mode == 'xce':
-    pred = tf.reduce_mean(X, axis=[1,2])
-
+pred = utils.top_layers(X, mode)
 pred = tf.layers.dense(pred, config.num_classes)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
