@@ -88,7 +88,7 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
 def dump_data(mode):
     count = 0
     new_x_train, new_y_train = [], []
-    for x, y in next_batch(x_train.copy(), y_train.copy(), batch_size=config.batch_size, mode):
+    for x, y in next_batch(x_train.copy(), y_train.copy(), config.batch_size, mode):
         for e_x, e_y in zip(x, y):
             path = 'x_train_' + mode + '/' + str(count) + '.pickle'
             pickle.dump(e_x, open(path, 'wb'), pickle.HIGHEST_PROTOCOL)
