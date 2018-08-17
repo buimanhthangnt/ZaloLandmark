@@ -5,4 +5,12 @@ __pycache__
 Public
 TrainVal
 model
-pickle
+x_train_res
+x_train_inc
+x_train_v3
+x_test_res
+x_test_inc
+x_test_v3
+res.pickle
+inc.pickle
+v3.pickle
