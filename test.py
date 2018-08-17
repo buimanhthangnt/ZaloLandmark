@@ -64,7 +64,7 @@ pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
 pred = tf.layers.flatten(pred)
 pred = tf.layers.dense(pred, num_classes)
 
-sess =  tf.InteractiveSession()
+sess =  tf.Session()
 sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 
