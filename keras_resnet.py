@@ -37,7 +37,7 @@ pred = tf.keras.layers.GlobalAveragePooling2D(X)
 pred = tf.layers.dense(pred, config.num_classes)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
-train_op = tf.train.AdamOptimizer(config.learning_rate=config.learning_rate).minimize(loss_op)
+train_op = tf.train.AdamOptimizer(learning_rate=config.learning_rate).minimize(loss_op)
 
 sess =  tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
