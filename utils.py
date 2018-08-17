@@ -3,7 +3,7 @@ import numpy as np
 import config
 
 
-def top_layers(pred, mode):
+def top_layers(X, mode):
     if mode == 'res':
         pred = tf.layers.average_pooling2d(X, (7, 7), strides=(7,7))
         pred = tf.layers.flatten(pred)
