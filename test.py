@@ -54,11 +54,14 @@ def next_batch_test(XXX, batch_size=config.batch_size):
         x_batch = get_features(x_batch)
 
         paths = np.array(paths)
+        pickle.dump((x_batch, paths), open('pickle_test/' + str(i) + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
 
-        yield x_batch, paths
+        # yield x_batch, paths
 
 
 _, _, x_test = pickle.load(open('data.pickle', 'rb'))
+next_batch_test()
+exit(0)
 
 
 X = tf.placeholder(dtype=tf.float32, shape=config.feature_shape)

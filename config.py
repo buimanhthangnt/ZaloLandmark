@@ -1,8 +1,8 @@
 num_classes = 103
 num_epochs = 200
-batch_size = 128
+batch_size = 256
 patience = 36
-learning_rate = 0.001
+learning_rate = 0.0008
 decay = 0.9
 feature_shape = [None, 7, 7, 2048]
 image_size = 299
