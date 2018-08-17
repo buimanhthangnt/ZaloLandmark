@@ -67,13 +67,19 @@ for i in range(num_epochs):
             print("Epoch %d, batch %d: loss = %f" % (i, j, loss))
         if j % 200 == 0:
             accs = []
+            tmp1, tmp2 = None, None
             for x_val_feed, y_val_feed in next_batch(x_val, y_val):
                 y_pred = sess.run(pred, feed_dict={X: x_val_feed, y: y_val_feed})
                 y_pred = np.argmax(y_pred, axis=1)
+                tmp1 = y_pred
                 y_val_label = np.argmax(y_val_feed, axis=1)
+                tmp2 = y_val_label
                 acc = np.mean(y_pred == y_val_label)
                 accs.append(acc)
             final_acc = np.mean(np.array(accs))
+            if final_acc > 0.7:
+                print(tmp1)
+                print(tmp2)
             print("Validation accuracy: %f" % final_acc)
             if final_acc > best_acc:
                 best_acc = final_acc
