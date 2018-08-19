@@ -15,6 +15,8 @@ x_train, y_train = pickle.load(open(mode + '.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1, shuffle=True)
 
+class_weights = utils.cal_weights(y_train, config.num_classes)
+
 
 def next_batch(_X, _Y, batch_size=config.batch_size):
     _X, _Y = shuffle(_X, _Y)
@@ -37,8 +39,10 @@ y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
 pred = utils.top_layers(X, mode)
 pred = tf.layers.dense(pred, config.num_classes)
+class_weights = tf.constant(class_weights)
+weight_logits = tf.mul(pred, class_weights)
 
-loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
+loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=weight_logits))
 train_op = tf.train.AdamOptimizer(learning_rate=config.learning_rate).minimize(loss_op)
 
 sess =  tf.InteractiveSession()

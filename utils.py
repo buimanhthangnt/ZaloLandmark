@@ -40,3 +40,13 @@ def get_image_size(mode):
     elif mode == 'xce':
         image_size = config.image_size_xce
     return image_size
+
+
+def cal_weights(data, num_classes=103):
+    weights = [0 for i in range(num_classes)]
+    for y in data:
+        weights[y] += 1
+    weights = np.array(weights)
+    mysum = np.sum(weights)
+    weights = weights / mysum
+    return np.array(weights)
