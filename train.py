@@ -8,7 +8,7 @@ import config
 import utils
 
 
-mode = 'xce'
+mode = 'res'
 feature_shape = utils.get_input_shape(mode)
 
 x_train, y_train = pickle.load(open(mode + '.pickle', 'rb'))
@@ -40,7 +40,7 @@ y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 pred = utils.top_layers(X, mode)
 pred = tf.layers.dense(pred, config.num_classes)
 class_weights = tf.constant(class_weights)
-weight_logits = tf.mul(pred, class_weights)
+weight_logits = tf.multiply(pred, class_weights)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=weight_logits))
 train_op = tf.train.AdamOptimizer(learning_rate=config.learning_rate).minimize(loss_op)
