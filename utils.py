@@ -45,7 +45,8 @@ def get_image_size(mode):
 def cal_weights(data, num_classes=103):
     weights = [0 for i in range(num_classes)]
     for y in data:
-        weights[y] += 1
+        idx = np.argmax(y)
+        weights[idx] += 1
     weights = np.array(weights)
     mysum = np.sum(weights)
     weights = weights / mysum
