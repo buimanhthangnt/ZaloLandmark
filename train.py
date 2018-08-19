@@ -39,7 +39,7 @@ y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
 pred = utils.top_layers(X, mode)
 pred = tf.layers.dense(pred, config.num_classes)
-class_weights = tf.constant(class_weights)
+class_weights = tf.cast(tf.constant(class_weights), tf.float32)
 weight_logits = tf.multiply(pred, class_weights)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=weight_logits))
