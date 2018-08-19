@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import config
+from collections import defaultdict
 
 
 def top_layers(X, mode):
@@ -51,3 +52,25 @@ def cal_weights(data, num_classes=103):
     mysum = np.sum(weights)
     weights = weights / mysum
     return np.array(weights)
+
+
+def upsampling(data_x, data_y, num_classes):
+    weights = cal_weights(data_y, num_classes)
+    weights = weights / np.max(weights)
+    weights = np.sqrt(weights) - weights
+    dict_samples = defaultdict(list)
+    idx_y = np.argmax(data_y, axis=-1)
+    for idx, y in enumerate(data_y):
+        y = np.argmax(y)
+        dict_samples[y].append(idx)
+    max_length = np.max(np.array([len(dict_samples[key]) for key in dict_samples]))
+    for idx, weight in enumerate(weights):
+        num_extra = int(np.ceil(weight * max_length))
+        if num_extra == 0: continue
+        rand_idx = np.random.randint(len(dict_samples[idx]), size=num_extra)
+        extras_x = data_x[np.array(dict_samples[idx])[rand_idx]]
+        data_x = np.concatenate((data_x, extras_x), axis=0)
+        extras_y = np.zeros((num_extra, num_classes))
+        extras_y[:,idx] = 1
+        data_y = np.concatenate((data_y, extras_y))
+    return data_x, data_y
