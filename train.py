@@ -39,9 +39,9 @@ X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
 pred = utils.top_layers(X, mode)
-logits = tf.layers.dense(pred, config.num_classes)
+pred = tf.layers.dense(pred, config.num_classes)
 
-loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=logits))
+loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
 train_op = tf.train.AdamOptimizer(learning_rate=config.learning_rate).minimize(loss_op)
 
 sess =  tf.InteractiveSession()
