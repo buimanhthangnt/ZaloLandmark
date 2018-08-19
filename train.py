@@ -23,7 +23,8 @@ def next_batch(_X, _Y, batch_size=config.batch_size):
     num_batch = int(np.ceil(len(_Y) / config.batch_size))
     for i in range(num_batch):
         x_batch, y_batch = [], []
-        for path, label in zip(_X[i*config.batch_size:(i+1)*config.batch_size], _Y[i*config.batch_size:(i+1)*config.batch_size]):
+        for path, label in zip(_X[i*config.batch_size:(i+1)*config.batch_size], \
+                               _Y[i*config.batch_size:(i+1)*config.batch_size]):
             feature_vec = pickle.load(open(path, 'rb'))
             x_batch.append(feature_vec)
             y_batch.append(label)
@@ -39,10 +40,14 @@ y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
 pred = utils.top_layers(X, mode)
 pred = tf.layers.dense(pred, config.num_classes)
-class_weights = tf.cast(tf.constant(class_weights), tf.float32)
-weight_logits = tf.multiply(pred, class_weights)
 
-loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=weight_logits))
+# Weight loss
+class_weights = tf.cast(tf.constant(class_weights), tf.float32)
+weight_per_label = tf.transpose(tf.matmul(y, tf.transpose(class_weights)))
+sum_loss = tf.multiply(weight_per_label, \
+                       tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
+loss_op = tf.reduce_mean(sum_loss)
+
 train_op = tf.train.AdamOptimizer(learning_rate=config.learning_rate).minimize(loss_op)
 
 sess =  tf.InteractiveSession()
