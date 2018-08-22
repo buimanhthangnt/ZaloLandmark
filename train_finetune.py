@@ -38,14 +38,14 @@ def next_batch(_X, _Y, batch_size=config.batch_size):
 X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
-X = tf.layers.batch_normalization(X)
-X = tf.nn.relu(X)
+pred = tf.layers.batch_normalization(pred)
+pred = tf.nn.relu(pred)
 
-X = tf.layers.separable_conv2d(X, 2048, (3,3), padding='same', use_bias=False)
-X = tf.layers.batch_normalization(X)
-X = tf.nn.relu(X)
+pred = tf.layers.separable_conv2d(pred, 2048, (3,3), padding='same', use_bias=False)
+pred = tf.layers.batch_normalization(pred)
+pred = tf.nn.relu(pred)
 
-pred = utils.top_layers(X, mode)
+pred = utils.top_layers(pred, mode)
 pred = tf.layers.dense(pred, config.num_classes)
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
