@@ -30,11 +30,11 @@ X2 = tf.placeholder(dtype=tf.float32, shape=feature_shape2)
 pred1 = utils.top_layers(X1, mode1)
 pred2 = utils.top_layers(X2, mode2)
 
-# pred = tf.concat([pred1, pred2], axis=-1)
-# pred = tf.layers.dense(pred, config.num_classes)
-pred1 = tf.layers.dense(pred1, config.num_classes, activation='softmax')
-pred2 = tf.layers.dense(pred2, config.num_classes, activation='softmax')
-pred = 0.6 * pred1 + 0.4 * pred2
+pred = tf.concat([pred1, pred2], axis=-1)
+pred = tf.layers.dense(pred, config.num_classes)
+# pred1 = tf.layers.dense(pred1, config.num_classes, activation='softmax')
+# pred2 = tf.layers.dense(pred2, config.num_classes, activation='softmax')
+# pred = 0.6 * pred1 + 0.4 * pred2
 
 sess =  tf.Session()
 sess.run(tf.global_variables_initializer())

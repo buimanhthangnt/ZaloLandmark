@@ -24,7 +24,7 @@ _, _, x_test = pickle.load(open('data.pickle', 'rb'))
 X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 
 pred = utils.top_layers(X)
-pred = tf.layers.dense(pred, config.num_classes)
+pred = tf.layers.dense(pred, config.num_classes, activation='softmax')
 
 sess =  tf.Session()
 sess.run(tf.global_variables_initializer())
@@ -33,13 +33,17 @@ saver = tf.train.Saver()
 saver.restore(sess, './model_' + mode + '/' + mode + '.ckpt')
 results = []
 ids = []
+predictions = []
 for x_batch, paths in next_batch_test():
     prediction = sess.run(pred, feed_dict={X: x_batch})
-    prediction = np.argsort(prediction, axis=1)
-    prediction = prediction[:,::-1]
-    prediction = prediction[:,:3].tolist()
-    ids.extend(paths)
-    results.extend(prediction)
+    predictions.append(prediction)
+    # prediction = np.argsort(prediction, axis=1)
+    # prediction = prediction[:,::-1]
+    # prediction = prediction[:,:3].tolist()
+    # ids.extend(paths)
+    # results.extend(prediction)
+pickle.dump(predictions, open('tmp/' + mode + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
+exit(0)
 
 title = ["id", "predicted"]
 content = []
