@@ -19,10 +19,11 @@ import config
 import utils
 
 
-model_inc = InceptionResNetV2(weights='imagenet', include_top=False)
-model_res = ResNet50(weights='imagenet', include_top=False)
-model_v3 = InceptionV3(weights='imagenet', include_top=False)
+# model_inc = InceptionResNetV2(weights='imagenet', include_top=False)
+# model_res = ResNet50(weights='imagenet', include_top=False)
+# model_v3 = InceptionV3(weights='imagenet', include_top=False)
 model_xce = Xception(weights='imagenet', include_top=False)
+model_xce = Model(inputs=model_xce.input, outputs=model_xce.get_layer('block14_sepconv1').output)
 
 
 def get_features_inc(images):
@@ -95,6 +96,8 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
 
         x_batch = np.array(x_batch)
         x_batch = get_features(x_batch, mode)
+        print(x_batch.shape)
+        exit(0)
 
         y_batch = np.array(y_batch)
 
@@ -116,14 +119,14 @@ def dump_data(mode):
     dump((new_x_train, new_y_train), mode + '.pickle')
     
 
-print("Dump res")
-dump_data(mode='res')
+# print("Dump res")
+# dump_data(mode='res')
 # print("Dump inc")
 # dump_data(mode='inc')
-print("Dump v3")
-dump_data(mode='v3')
-# print("Dump xce")
-# dump_data(mode='xce')
+# print("Dump v3")
+# dump_data(mode='v3')
+print("Dump xce")
+dump_data(mode='xce')
 
 
 def dump_test(_X, batch_size=config.batch_size, mode='res'):
@@ -154,11 +157,11 @@ def dump_test(_X, batch_size=config.batch_size, mode='res'):
         pickle.dump((x_batch, paths), open('x_test_' + mode + '/' + str(i) + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
 
 
-print("Dump test res")
-dump_test(x_test, mode='res')
+# print("Dump test res")
+# dump_test(x_test, mode='res')
 # print("Dump test inc")
 # dump_test(x_test, mode='inc')
-print("Dump test v3")
-dump_test(x_test, mode='v3')
-# print("Dump test xce")
-# dump_test(x_test, mode='xce')
+# print("Dump test v3")
+# dump_test(x_test, mode='v3')
+print("Dump test xce")
+dump_test(x_test, mode='xce')
