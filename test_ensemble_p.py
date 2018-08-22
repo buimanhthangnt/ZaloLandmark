@@ -8,8 +8,9 @@ import config
 import utils
 
 
-mode = 'res'
-feature_shape = utils.get_input_shape(mode)
+mode1 = 'res'
+mode2 = 'v3'
+# feature_shape = utils.get_input_shape(mode)
 
 
 # def next_batch_test():
