@@ -37,7 +37,7 @@ sess =  tf.Session()
 sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 
-saver.restore(sess, './best_model/' + mode + '.ckpt')
+saver.restore(sess, './best_model2/' + mode + '.ckpt')
 results = []
 ids = []
 for x_batch, paths in next_batch_test():
