@@ -26,7 +26,7 @@ def get_input_shape(mode):
     elif mode == 'v3':
         feature_shape = [None, 8, 8, 2048]
     elif mode == 'xce':
-        feature_shape = [None, 10, 10, 2048]
+        feature_shape = [None, 10, 10, 1536]
     return feature_shape
 
 

@@ -2,6 +2,7 @@ from __future__ import division
 import numpy as np
 import pickle
 from keras.preprocessing import image
+from keras import Model
 
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 from keras.applications.inception_resnet_v2 import preprocess_input as inc_preprocess
@@ -96,8 +97,6 @@ def next_batch(_X, _Y, batch_size=128, mode='res'):
 
         x_batch = np.array(x_batch)
         x_batch = get_features(x_batch, mode)
-        print(x_batch.shape)
-        exit(0)
 
         y_batch = np.array(y_batch)
 
