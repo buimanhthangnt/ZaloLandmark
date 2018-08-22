@@ -23,7 +23,7 @@ _, _, x_test = pickle.load(open('data.pickle', 'rb'))
 
 X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 
-pred = utils.top_layers(X)
+pred = utils.top_layers(X, mode)
 pred = tf.layers.dense(pred, config.num_classes, activation='softmax')
 
 sess =  tf.Session()
