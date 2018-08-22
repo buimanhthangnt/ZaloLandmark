@@ -1,6 +1,7 @@
 from __future__ import division
 import numpy as np
 import pickle
+from keras import Model
 from keras.preprocessing import image
 
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
@@ -19,10 +20,11 @@ import config
 import utils
 
 
-model_inc = InceptionResNetV2(weights='imagenet', include_top=False)
+# model_inc = InceptionResNetV2(weights='imagenet', include_top=False)
 model_res = ResNet50(weights='imagenet', include_top=False)
-model_v3 = InceptionV3(weights='imagenet', include_top=False)
-model_xce = Xception(weights='imagenet', include_top=False)
+model_res = Model(inputs=model_res.input, outputs=model_res.get_layer('bn5c_branch2a').output)
+# model_v3 = InceptionV3(weights='imagenet', include_top=False)
+# model_xce = Xception(weights='imagenet', include_top=False)
 
 
 def get_features_inc(images):
@@ -120,8 +122,8 @@ print("Dump res")
 dump_data(mode='res')
 # print("Dump inc")
 # dump_data(mode='inc')
-print("Dump v3")
-dump_data(mode='v3')
+# print("Dump v3")
+# dump_data(mode='v3')
 # print("Dump xce")
 # dump_data(mode='xce')
 
@@ -158,7 +160,7 @@ print("Dump test res")
 dump_test(x_test, mode='res')
 # print("Dump test inc")
 # dump_test(x_test, mode='inc')
-print("Dump test v3")
-dump_test(x_test, mode='v3')
+# print("Dump test v3")
+# dump_test(x_test, mode='v3')
 # print("Dump test xce")
 # dump_test(x_test, mode='xce')
