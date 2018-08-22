@@ -13,11 +13,11 @@ mode2 = 'v3'
 # feature_shape = utils.get_input_shape(mode)
 
 
-# def next_batch_test():
-#     path = 'x_test_'
-#     for fil in sorted(os.listdir(path + mode)):
-#         x_batch, paths = pickle.load(open(os.path.join(path + mode, fil), 'rb'))
-#         yield x_batch, paths
+def next_batch_test():
+    path = 'x_test_'
+    for fil in sorted(os.listdir(path + mode)):
+        x_batch, paths = pickle.load(open(os.path.join(path + mode, fil), 'rb'))
+        yield x_batch, paths
 
 
 # _, _, x_test = pickle.load(open('data.pickle', 'rb'))
@@ -37,7 +37,7 @@ ids = []
 # predictions = []
 prediction1 = pickle.load(open('tmp/' + mode1 + '.pickle', 'rb'))
 prediction2 = pickle.load(open('tmp/' + mode2 + '.pickle', 'rb'))
-for i in range(len(prediction1)):
+for i, x, y in enumerate(next_batch_test()):
     prediction = 0.6 * prediction1[i] + 0.4 * prediction2[i]
     prediction = np.argsort(prediction, axis=1)
     prediction = prediction[:,::-1]
