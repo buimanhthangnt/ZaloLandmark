@@ -35,8 +35,8 @@ mode2 = 'v3'
 # results = []
 # ids = []
 # predictions = []
-prediction1 = pickle.load(open('tmp/' + mode1 + '.pickle'))
-prediction2 = pickle.load(open('tmp/' + mode2 + '.pickle'))
+prediction1 = pickle.load(open('tmp/' + mode1 + '.pickle', 'rb'))
+prediction2 = pickle.load(open('tmp/' + mode2 + '.pickle', 'rb'))
 for i in range(len(prediction1)):
     prediction = 0.6 * prediction1[i] + 0.4 * prediction2[i]
     prediction = np.argsort(prediction, axis=1)
