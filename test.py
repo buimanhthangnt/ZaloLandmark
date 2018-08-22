@@ -13,7 +13,7 @@ feature_shape = utils.get_input_shape(mode)
 
 
 def next_batch_test():
-    path = 'pickle_test'
+    path = 'x_test_'
     for fil in os.listdir(path):
         x_batch, paths = pickle.load(open(os.path.join(path, fil), 'rb'))
         yield x_batch, paths
