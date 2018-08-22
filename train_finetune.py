@@ -77,7 +77,7 @@ for i in range(config.num_epochs):
             if final_acc > best_acc:
                 best_acc = final_acc
                 n_steps_no_improvement = 0
-                saver.save(sess, './model_' + mode + '/' + mode + '.ckpt')
+                saver.save(sess, './model_' + mode + '_no_up/' + mode + '.ckpt')
                 print("Saved model")
             else:
                 n_steps_no_improvement += 1
