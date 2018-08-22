@@ -13,7 +13,8 @@ def top_layers(X, mode):
     elif mode == 'v3':
         pred = tf.reduce_mean(X, axis=[1,2])
     elif mode == 'xce':
-        pred = tf.reduce_mean(X, axis=[1,2])
+        pred = tf.layers.average_pooling2d(X, (10, 10), strides=(10,10))
+        pred = tf.layers.flatten(pred)
     return pred
 
 

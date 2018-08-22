@@ -13,7 +13,7 @@ feature_shape = utils.get_input_shape(mode)
 
 x_train, y_train = pickle.load(open(mode + '.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1, shuffle=True)
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.08, shuffle=True)
 
 #x_train, y_train = utils.upsampling(x_train, y_train, config.num_classes)
 
