@@ -15,8 +15,8 @@ mode2 = 'v3'
 
 def next_batch_test():
     path = 'x_test_'
-    for fil in sorted(os.listdir(path + mode)):
-        x_batch, paths = pickle.load(open(os.path.join(path + mode, fil), 'rb'))
+    for fil in sorted(os.listdir(path + mode1)):
+        x_batch, paths = pickle.load(open(os.path.join(path + mode1, fil), 'rb'))
         yield x_batch, paths
 
 
@@ -37,12 +37,12 @@ ids = []
 # predictions = []
 prediction1 = pickle.load(open('tmp/' + mode1 + '.pickle', 'rb'))
 prediction2 = pickle.load(open('tmp/' + mode2 + '.pickle', 'rb'))
-for i, x, y in enumerate(next_batch_test()):
+for i, x in enumerate(next_batch_test()):
     prediction = 0.6 * prediction1[i] + 0.4 * prediction2[i]
     prediction = np.argsort(prediction, axis=1)
     prediction = prediction[:,::-1]
     prediction = prediction[:,:3].tolist()
-    ids.extend(paths)
+    ids.extend(x[1])
     results.extend(prediction)
 
 title = ["id", "predicted"]
@@ -55,7 +55,7 @@ for col1, col2 in zip(ids, results):
 save_path = 'results/'
 if not os.path.exists(save_path):
     os.mkdir(save_path)
-result_file = open(os.path.join(save_path, mode + '.csv'), 'w')
+result_file = open(os.path.join(save_path, mode1 + '_' + mode2 + '.csv'), 'w')
 with result_file:
     writer = csv.writer(result_file)
     writer.writerows(content)
