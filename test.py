@@ -8,7 +8,7 @@ import config
 import utils
 
 
-mode = 'res'
+mode = 'xce'
 feature_shape = utils.get_input_shape(mode)
 
 
@@ -23,14 +23,21 @@ _, _, x_test = pickle.load(open('data.pickle', 'rb'))
 
 X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 
-pred = utils.top_layers(X, mode)
-pred = tf.layers.dense(pred, config.num_classes, activation='softmax')
+pred = tf.layers.batch_normalization(X)
+pred = tf.nn.relu(pred)
+
+pred = tf.layers.separable_conv2d(pred, 2048, (3,3), padding='same', use_bias=False)
+pred = tf.layers.batch_normalization(pred)
+pred = tf.nn.relu(pred)
+
+pred = utils.top_layers(pred, mode)
+pred = tf.layers.dense(pred, config.num_classes)
 
 sess =  tf.Session()
 sess.run(tf.global_variables_initializer())
 saver = tf.train.Saver()
 
-saver.restore(sess, './model_' + mode + '/' + mode + '.ckpt')
+saver.restore(sess, './model_' + mode + '_no_up/' + mode + '.ckpt')
 results = []
 ids = []
 for x_batch, paths in next_batch_test():
