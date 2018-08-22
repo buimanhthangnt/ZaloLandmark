@@ -56,6 +56,7 @@ sess.run(tf.global_variables_initializer())
 n_steps_no_improvement = 0
 best_acc = 0
 saver = tf.train.Saver()
+saver.save(sess, './best_model/' + mode + '.ckpt')
 for i in range(config.num_epochs):
     j = 0
     for x_feed, y_feed in next_batch(x_train, y_train):
