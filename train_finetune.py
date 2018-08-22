@@ -41,12 +41,19 @@ y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 pred = tf.layers.batch_normalization(X)
 pred = tf.nn.relu(pred)
 
-pred = tf.layers.separable_conv2d(pred, 2048, (3,3), padding='same', use_bias=False)
+pred = tf.layers.separable_conv2d(pred, 2048, (3,3), padding='same', use_bias=False, \
+                                  depthwise_initializer=tf.contrib.layers.xavier_initializer(),
+                                  pointwise_initializer=tf.contrib.layers.xavier_initializer(),
+                                  depthwise_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                                  pointwise_regularizer=tf.contrib.layers.l2_regularizer(1e-4))
 pred = tf.layers.batch_normalization(pred)
 pred = tf.nn.relu(pred)
 
 pred = utils.top_layers(pred, mode)
-pred = tf.layers.dense(pred, config.num_classes)
+pred = tf.layers.dense(pred, config.num_classes, \
+                       kernel_initializer=tf.contrib.layers.xavier_initializer(),
+                       kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-4),
+                       bias_initializer=tf.contrib.layers.xavier_initializer())
 
 loss_op = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=pred))
 train_op = tf.train.AdamOptimizer(learning_rate=config.learning_rate).minimize(loss_op)
