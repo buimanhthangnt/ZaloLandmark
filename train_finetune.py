@@ -38,7 +38,7 @@ def next_batch(_X, _Y, batch_size=config.batch_size):
 X = tf.placeholder(dtype=tf.float32, shape=feature_shape)
 y = tf.placeholder(dtype=tf.float32, shape=[None, config.num_classes])
 
-pred = tf.layers.batch_normalization(pred)
+pred = tf.layers.batch_normalization(X)
 pred = tf.nn.relu(pred)
 
 pred = tf.layers.separable_conv2d(pred, 2048, (3,3), padding='same', use_bias=False)
