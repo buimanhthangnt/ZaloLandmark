@@ -33,17 +33,13 @@ saver = tf.train.Saver()
 saver.restore(sess, './model_' + mode + '/' + mode + '.ckpt')
 results = []
 ids = []
-predictions = []
 for x_batch, paths in next_batch_test():
     prediction = sess.run(pred, feed_dict={X: x_batch})
-    predictions.append(prediction)
-    # prediction = np.argsort(prediction, axis=1)
-    # prediction = prediction[:,::-1]
-    # prediction = prediction[:,:3].tolist()
-    # ids.extend(paths)
-    # results.extend(prediction)
-pickle.dump(predictions, open('tmp/' + mode + '.pickle', 'wb'), pickle.HIGHEST_PROTOCOL)
-exit(0)
+    prediction = np.argsort(prediction, axis=1)
+    prediction = prediction[:,::-1]
+    prediction = prediction[:,:3].tolist()
+    ids.extend(paths)
+    results.extend(prediction)
 
 title = ["id", "predicted"]
 content = []
