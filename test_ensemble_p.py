@@ -32,8 +32,8 @@ mode2 = 'v3'
 # saver = tf.train.Saver()
 
 # saver.restore(sess, './model_' + mode + '/' + mode + '.ckpt')
-# results = []
-# ids = []
+results = []
+ids = []
 # predictions = []
 prediction1 = pickle.load(open('tmp/' + mode1 + '.pickle', 'rb'))
 prediction2 = pickle.load(open('tmp/' + mode2 + '.pickle', 'rb'))
