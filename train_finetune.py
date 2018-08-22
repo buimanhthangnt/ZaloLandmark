@@ -15,7 +15,7 @@ x_train, y_train = pickle.load(open(mode + '.pickle', 'rb'))
 x_train, y_train = shuffle(x_train, y_train)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.1, shuffle=True)
 
-# x_train, y_train = utils.upsampling(x_train, y_train, config.num_classes)
+#x_train, y_train = utils.upsampling(x_train, y_train, config.num_classes)
 
 
 def next_batch(_X, _Y, batch_size=config.batch_size):
